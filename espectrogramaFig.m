@@ -22,7 +22,7 @@ function varargout = espectrogramaFig(varargin)
 
 % Edit the above text to modify the response to help espectrogramaFig
 
-% Last Modified by GUIDE v2.5 29-Nov-2013 22:01:34
+% Last Modified by GUIDE v2.5 29-Nov-2013 23:23:45
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -110,16 +110,19 @@ N = str2num(get(handles.edit1, 'string')); % Numero de ventanas
 figure(1)
 [y,fs]=wavread('power.wav');
 t=linspace(0,length(y)/fs,length(y));
-subplot(2,1,1);       % add first plot in 2 x 1 grid
+subplot(3,1,1);       % add first plot in 2 x 1 grid
 plot(t,y);
 title('Senial Original de audio');
 
 Nfft = 1024;
 f = linspace(0,fs,Nfft);
 G=abs(fft(y,Nfft));
-subplot(2,1,2);       % add first plot in 2 x 1 grid
+subplot(3,1,2);       % add first plot in 2 x 1 grid
 plot(f(1:Nfft/2),G(1:Nfft/2));
 title('FFT senial original');
+
+subplot(3,1,3);       % add first plot in 2 x 1 grid
+ax = imagesc(t,f,G);
 
 
 for c = 0:N-1
@@ -127,19 +130,20 @@ for c = 0:N-1
     figure(c+2)
     
     t2=linspace(((length(y)/fs)/N)*(c),((length(y)/fs)/N)*(c + 1),length(y)/N);
-    subplot(2,1,1);       
+    subplot(3,1,1);       
     plot(t2,y(c*(length(y)/N) + 1: (c + 1) *(length(y)/N) ));      
     titleDesc = strcat(strcat(strcat('Ventana ',num2str(c+1)),' de '),num2str(N));
     title(titleDesc);
-           
+            
     f2 = linspace(0,fs,Nfft);
     G2=abs(fft(y(c*(length(y)/N) + 1: (c + 1) *(length(y)/N) ),Nfft));
-    subplot(2,1,2);       % add first plot in 2 x 1 grid
-    plot(f2(1:Nfft/2),G2(1:Nfft/2));
-    title(strcat('FFT Ventana - ',num2str(c+1)));      
+    subplot(3,1,2);       % add first plot in 2 x 1 grid
+    Nfft = Nfft /N
+    plot(f2(1+((Nfft/2)*c):((Nfft/2)*(c+1))),G2(1:(Nfft/2)));
+    
+    title(strcat('FFT Ventana - ',num2str(c+1)));    
+    
+    subplot(3,1,3);       % add first plot in 2 x 1 grid
+    ax = imagesc(t2,f2,G2);
 
 end
-
-
-
-
